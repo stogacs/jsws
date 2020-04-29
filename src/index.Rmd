@@ -373,3 +373,5 @@ function invalidFunction(s: str): void {                // Declare function that
 
 The source code for this presentation and full solutions can be found at
 [github.com/stogacs/jsws](https://github.com/stogacs/jsws).
+
+Navigate to the completed page here: [starter-solutions.html](./starter-solutions.html)
