@@ -1,0 +1,21 @@
+#!/bin/bash
+SCRIPT_DIR="$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")")"
+
+# shellcheck source=env
+source "$SCRIPT_DIR/env"
+
+# Check if required commands exist
+declare -a req_commands=("inotifywait")
+for c in "${req_commands[@]}"; do
+  $SCRIPT_CHECKCMD "$c" || exit
+done
+
+# Initial build
+time "$SCRIPT_BUILD"
+
+# Watch for changes in src and rebuild
+inotifywait -e modify \
+  -r -q -m "$SRC_DIR" |
+while read ; do
+  time $SCRIPT_BUILD
+done

@@ -1,0 +1,58 @@
+@import "style/fira-code.css";
+@import "style/latinmodern-roman.css";
+
+$font-family: "Latin Modern Roman";
+$font-code: "Fira Code";
+$mainfont-size: 0.7em;
+
+.reveal {
+  font-family: $font-family;
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    font-family: $font-family;
+  }
+
+  h1 {
+    font-size: 1.5em;
+  }
+
+  h2 {
+    font-size: 1.3em;
+  }
+
+  section {
+    text-align: left;
+
+    p,
+    ul,
+    ol,
+    code {
+      font-size: $mainfont-size;
+    }
+
+    code {
+      font-family: $font-code;
+      line-height: 120%;
+    }
+
+    pre code {
+      font-size: $mainfont-size;
+    }
+
+    ul,
+    ol {
+      list-style-type: circle;
+      padding-left: 30px;
+    }
+
+    .sourceCode {
+      margin-top: 0.5em;
+      margin-bottom: 0.5em;
+    }
+  }
+}

@@ -1,0 +1,33 @@
+#!/bin/bash
+SCRIPT_DIR="$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")")"
+
+# shellcheck source=env
+source "$SCRIPT_DIR/env"
+
+# Check if required commands exist
+declare -a REQ_CMDS=("Rscript" "pandoc")
+for c in "${REQ_CMDS[@]}"; do
+  "$SCRIPT_CHECKCMD" "$c" || exit
+done
+
+# Create target dir if not exist
+if [ ! -d "$TARGET_DIR" ]; then
+  mkdir "$TARGET_DIR" -p
+fi
+
+if [ ! -d "$TMP_DIR" ]; then
+  mkdir "$TMP_DIR" -p
+fi
+
+if [ ! -d "$DIST_DIR" ]; then
+  mkdir "$DIST_DIR" -p
+fi
+
+# Copy src dir
+cp -r "$SRC_DIR" "$TARGET_DIR/"
+
+# Run R render script
+cd "$TARGET_DIR" || exit
+Rscript "$SCRIPT_RENDER"
+
+cp "$TMP_DIR"/starter* "$DIST_DIR/"

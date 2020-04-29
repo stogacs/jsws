@@ -1,0 +1,375 @@
+---
+title: Introduction to (Browser) JavaScript
+output:
+  revealjs::revealjs_presentation:
+    center: false
+    css:
+      - styles.css
+    fig_caption: true
+    highlight: haddock
+    reveal_options:
+      controlsTutorial: false
+      previewLinks: true
+      slideNumber: true
+    theme: serif
+    transition: fade
+---
+
+```{bash, include = FALSE}
+sassc styles.scss styles.css
+```
+
+# Conceptual Overview
+
+JavaScript is a language that runs in the web (via web browser implementations)
+or in outside the browser (usually via the Node.js runtime)
+
+Some language "features":
+
+-   Dynamically (duck) typed
+-   JIT compilation
+-   Object-oriented
+-   First-class functions
+-   Often largely async
+
+------
+
+Other information:
+
+-   No single implementation; different browsers have different implementations
+    -   NodeJS (non-browser) --- V8
+    -   Chrome, Opera, Brave, other Chromium browsers --- V8
+    -   Firefox and derivatives --- Gecko
+    -   Safari --- WebKit
+    -   Many others
+-   Named after Java because it was popular at the time
+
+# Why?
+
+Somehow, it has become one of the most integral components of the modern web:
+
+-   Almost any web frontend application (pray for WASM)
+-   Increasingly also backend servers applications
+-   Easy to pick up
+-   Massive ecosystem
+-   Jobs?
+
+# Syntax Basics
+
+The syntax is pretty similar to Java at the most basic level
+
+-   No type declarations in function signatures or variable declarations
+-   Use `let` and `const`, not `var`
+-   Optional semicolons
+
+# Obligatory Hello World
+
+Let's start with a simple Hello World example.
+
+Open up `starter.js` and add the following code:
+
+```javascript
+function print(text) {      // defining a function with a single parameter
+  console.log(text)         // print to the console
+}
+
+print('Hello world!')       // call our function
+```
+
+Open `starter.html` in your browser and navigate to the console.
+
+# Variables
+
+`let` for mutable variables; `const` for immutables.
+
+```javascript
+let a = 5       // declare a mutable variable a with value 5
+const b = 3     // declare an immutable variable b with vaue 3
+a += b          // mutate the value of a
+console.log(a)
+
+a = "abc"       // mutate the value of a again; type doesn't matter
+```
+
+`var` is considered outdated; there are some scoping problems with it.
+
+# Functions
+
+The keyword `function` declares a function:
+
+```javascript
+function sum(a, b) {  // Define a function `sum` that takes 2 arguments
+  const c = a + b     // Do stuff in function body
+  return c            // Return statement
+}
+
+sum(1, 3)             // Returns 3
+```
+
+# Objects
+
+Objects don't have any predefined structure or methods.
+
+```javascript
+let object = {                  // Curly braces
+  a: 1,                         // Commas between key/values
+  b: "xyz",
+  c: {                          // Object property that's an object
+    d: false
+  }
+  f: function() {               // A function as a property (basically a method)
+    console.log(a + " " + b)
+  }
+}
+```
+
+## Accessing Object Properties
+
+Access object properties like keys or just by name:
+
+```javascript
+console.log(object.a)       // Both print '1'
+console.log(object["a"])
+
+console.log(object.c["d"])  // Prints 'true'
+
+object.f()                  // Calls method f()
+
+object.e = "x"              // Set the property `e`
+```
+
+## Annoying `this`
+
+`this` is simlar to `this` or `self` in Java and Python, but can behave very
+differently
+
+-   Typically the execution "context" of the function
+-   Use `bind` to set `this` in a function execution
+
+```javascript
+object.g = function() {
+  console.log(this)
+}
+
+// Prints { a: 1, b: "xyz", c: { d: false }, e: "x", f: f(), g: f() }
+object.g()
+```
+
+See [developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/this)
+
+# Arrays
+
+Arrays are zero-indexed and not fixed-size:
+
+```javascript
+let words = ['Rust', 'bad']
+
+console.log(words[0])         // Prints "Rust"
+console.log(words[1])         // Prints "bad"
+```
+
+`push` appends a new element:
+
+```javascript
+words.push("!")               // Append "!" as third element
+
+console.log(words.length)     // Prints '3'
+```
+
+# Null and Undefined
+
+If you refer to an undeclared variable, it will return `undefined`.
+
+You can set a variable to `null` to represent empty.
+
+# Flow Control
+
+`if` blocks are executed if the conditional expression is a "truthy" value.
+True values include:
+
+-   `true`
+-   non-zero numbers
+-   non-empty strings
+-   any object or array
+
+Use `===` (===) for equality, not `==` (==); JavaScript tries to coerce values
+to the same type when `==` is used.
+
+-----
+
+`undefined` or `null` values are considered "falsy".
+
+```javascript
+let a = true
+let b = { x: 5 }
+let c = 3
+
+if (a) {
+  console.log(a)    // Executes; true is a truthy value
+}
+
+if (b) {
+  console.log(b)    // Executes; b is an object
+}
+
+if (c === 3) {
+  console.log(c)    // Executes; c is equal to 3
+}
+
+if (d) {
+  console.log(d)    // Doesn't execute; d is undefined
+}
+```
+
+## Loops
+
+There's three kinds of `for` loops and a `while` loop:
+
+```javascript
+for (let i = 0; i < words.length; i++) {    // C / Java-esque for loop
+  console.log(i + ": " + w[i])              // Prints:  "0: Rust"
+                                                        "1: bad"
+                                                        "2: !"
+}
+
+for (const w of words) {                    // for..of loop
+  console.log(w)                            // Prints:  "Rust"
+                                                        "bad"
+                                                        "!"
+
+for (const k in words) {                    // for..in loop
+                                            // `k` is each key in the object
+  console.log(k)                            // Prints:  "0" (strings)
+                                                        "1"
+}                                                       "2"
+
+
+let i = 0
+while (i < 5) {                             // while loop
+  i++
+}
+```
+
+# Type Quirks
+
+You might run into a lot of weird "bugs" when writing JavaScript:
+
+```
+> true + true
+2
+
+> "foo" + + "asd"
+'fooNaN'
+
+> "2" + 1
+'21'
+
+> "2" - 1
+1
+```
+
+See WTFJS: [youtube.com/watch?v=et8xNAc2ic8](https://www.youtube.com/watch?v=et8xNAc2ic8)
+
+# More Syntax
+
+The ECMAScript specification is continually expanding, and these useful
+features are far outside the scope of this intro:
+
+-   Promises, async/await
+-   Classes, interfaces
+-   Optional chaining
+-   Module syntax
+-   Rest/spread operator
+-   Destructuring
+-   Lamda functions
+-   Way more other stuff
+
+# Manipulating the DOM
+
+JavaScript in the web interacts with the DOM (Document Object Model) given by
+the HTML:
+
+Refer to the global variable `document` to create new DOM nodes, change
+styles/text, etc.
+
+## Input Box Example
+
+Let's make the form (id `loginput`) with the text input box (id `loginput-text`)
+print the text submitted to the text input box when the user hits return:
+
+```javascript
+const logForm = document.getElementById("loginput");            // Use the method `getElementById` to get a reference to
+                                                                // the form
+logForm.onsubmit = function () {                                // Set the action to be taken when the form is submitted
+  const textInput = document.getElementById("loginput-text");   // Get the text from the input box
+  console.log(textInput.value);                                 // Log the console
+  textInput.value = "";                                         // Reset the text box
+  return false;                                                 // Tell the page to not reload
+};
+```
+
+# Guessing Game Example
+
+Let's build a simple number guessing game with the prewritten HTML in the `<div>` with id `guess`:
+
+-   Generate an integer between 0 and 100
+-   Check if the user inputted number is correct on input submission
+-   Emit helpful responses to the user's guess
+
+Maybe:
+
+-   When the user guesses correctly, display a button that restarts the game
+
+# The JS Ecosystem
+
+Libraries and frameworks make DOM manipulation less painful:
+
+-   React, Angular, Vue, Ember, etc.
+-   Template engines like Handlebars or rivets
+-   JQuery (though this is used much less nowadays)
+
+NodeJS unifies browser and non-browser JavaScript to one language and ecosystem:
+
+-   Use the Node Package Manager and a bundler (like Webpack or Parcel) to
+    install and bundle packages for the web
+-   A ridiculous volume of packages
+
+Absurd amount of available tooling:
+
+-   Compilers/processors to extend JavaScript syntax (babel, etc.)
+-   Linters for JavaScript, HTML, CSS, SCSS, etc. (eslint, stylelint, etc.)
+-   Opinionated style formatters (prettier, stylelint, etc.)
+
+## Typescript
+
+**Opinion**: JavaScript is a language that's difficult to read and write.
+
+Typescript ([typescriptlang.org](https://www.typescriptlang.org/)) is a superset
+of JavaScript with **compile-time type checking**
+
+```typescript
+function multiply(a: number, b: number): number {       // Type definitions on parameters and return
+  let c = a * b
+  return c
+}
+
+multiply(3, 4)
+multiply("xyz", 5)                                      // Syntax error: "xyz" isn't a number
+
+function stringArray(s: string, x: number): string[] {  // Returns an array of strings
+  let arr: string[] = []
+  for (let i = 0; i < x: i++) {
+    arr[i] = s
+  }
+  return arr
+}
+
+function invalidFunction(s: str): void {                // Declare function that doesn't return
+  return s                                              // Syntax error: we can't return a string
+}                                                       // if the function return type is void
+```
+
+# Source
+
+The source code for this presentation and full solutions can be found at
+[github.com/stogacs/jsws](https://github.com/stogacs/jsws).

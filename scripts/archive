@@ -1,0 +1,17 @@
+#!/bin/bash
+SCRIPT_DIR="$(dirname "$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)/$(basename "${BASH_SOURCE[0]}")")"
+
+# shellcheck source=env
+source "$SCRIPT_DIR/env"
+
+declare -a REQ_CMDS=("bundledoc")
+for c in "${REQ_CMDS[@]}"; do
+  "$SCRIPT_CHECKCMD" "$c" || exit
+done
+
+bundledoc --config="$TMP_DIR/bundledoc.cfg" \
+  --texfile="$DIST_DIR/index.tex" \
+  --manifest="$DIST_DIR/manifest" \
+  "$TMP_DIR/index.dep"
+mv "$TMP_DIR/index-all.tar.gz" "$DIST_DIR/"
+

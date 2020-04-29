@@ -1,0 +1,54 @@
+name: pages
+
+on:
+  - push
+
+env:
+  RENV_PATHS_ROOT: ~/.local/share/renv
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v1
+
+      - name: Update apt list
+        run: sudo apt-get update
+
+      - name: Install sassc
+        run: sudo apt-get install sassc
+
+      - name: Install R
+        uses: r-lib/actions/setup-r@v1
+
+      - name: Install pandoc
+        uses: r-lib/actions/setup-pandoc@v1
+
+      - name: Install renv
+        shell: Rscript {0}
+        run: |
+          install.packages("renv")
+
+      - name: Restore renv cache
+        uses: actions/cache@v1
+        with:
+          path: ~/.local/share/renv
+          key: ${{ runner.os }}-renv-${{ hashFiles('**/renv.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-renv-
+
+      - name: Install R packages
+        shell: Rscript {0}
+        run: |
+          renv::restore()
+
+      - name: Build
+        run: scripts/build
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: build/dist
+
